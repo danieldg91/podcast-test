@@ -1,0 +1,25 @@
+name: Generate Podcast Feeds
+on: [push] #Trigger processing — any pushes to main branch in repository will trigger
+jobs: #What is going to be done.
+  build: 
+    runs-on: ubuntu-latest #run on a specific type of machine
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: #To include variables that actions can use
+          python-version: '3.10'
+      - name: Install Dependencies
+        run: | #runs multiline command
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      - name: Run Feed Generator
+        run: python feed.py #the application that generates the podcast (xml file)
+      - name: Push Repo
+        run: | #run to setup git as if this was a new machine
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Modified Feed"
+          git push
